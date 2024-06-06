@@ -1,5 +1,5 @@
-#define IN1 6
-#define IN2 5
+#define IN1 5
+#define IN2 6
 #define IN3 10
 #define IN4 9
 #define FL 2
@@ -43,18 +43,20 @@ void writeSpeed() {
 }
 
 void readSerial() {
-  String inputString = "";
-  while (Serial.available()) {
-    char inChar = (char) Serial.read();
-    inputString += inChar;
-  }
+  String inputString = Serial.readStringUntil('\n');
 
   speed1 = inputString.substring(0, inputString.indexOf(',')).toInt();
   speed2 = inputString.substring(inputString.indexOf(',') + 1).toInt();
+
+  while (Serial.available()) {
+    Serial.readStringUntil('\n');
+  }
 }
 
 void loop() {
-  readSerial();
+  if (Serial.available()) {
+    readSerial();
+  }
   
   Serial.print(String(digitalRead(FL)) + ",");
   Serial.print(String(digitalRead(CL)) + ",");
@@ -65,5 +67,4 @@ void loop() {
   Serial.println(String(speed2));
   
   writeSpeed();
-  delay(50);
 }
