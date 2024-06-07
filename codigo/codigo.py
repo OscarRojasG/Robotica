@@ -42,14 +42,33 @@ def move_right():
 def move_left():
     write_speed(SPEED, 1.2 * SPEED)
 
+def move_backward():
+    write_speed(-SPEED, -SPEED)
+
 def turn_right():
+    def backward():
+        move_backward()
+        Timer(0.15, stop_after_backward).start()
+
+    def stop_after_backward():
+        stop()
+        Timer(0.5, rotate).start()
+
     def rotate():
         write_speed(SPEED, -SPEED)
-        Timer(0.26, release_lock).start()
+        Timer(0.6, stop_after_rotate).start()
+
+    def stop_after_rotate():
+        stop()
+        Timer(0.5, forward).start()
+
+    def forward():
+        move_forward()
+        Timer(0.5, release_lock).start()
 
     request_lock()
     stop()
-    Timer(0.25, rotate).start()
+    Timer(1, backward).start()
 
 def turn_back():
     write_speed(8,8)
@@ -81,6 +100,16 @@ if __name__ == "__main__":
             if not lock:
                 if fr == 0:
                     turn_right()
+                elif cc == 0:
+                    move_forward()
+                else:
+                    stop()
+            
+
+            '''
+            if not lock:
+                if fr == 0:
+                    turn_right()
                 elif fl == 1 and cl == 1 and cr == 0 and fr == 1:
                     move_left()
                 elif fl == 1 and cl == 0 and cr == 1 and fr == 1:
@@ -89,6 +118,7 @@ if __name__ == "__main__":
                     move_forward()
                 else:
                     stop()
+            '''
 
             json_data = {
                 "sensors": [fl, cl, cc, cr, fr],
@@ -100,7 +130,6 @@ if __name__ == "__main__":
             }
 
             print(data)
-
         except Exception as e:
             print(e)
             print("Error de lectura")

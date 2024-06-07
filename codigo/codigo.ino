@@ -30,7 +30,7 @@ void writeSpeed() {
     analogWrite(IN2, 0);
   } else {
     analogWrite(IN1, 0);
-    analogWrite(IN2, speed1); 
+    analogWrite(IN2, speed1);
   }
 
   if (speed2 >= 0) {
@@ -38,7 +38,7 @@ void writeSpeed() {
     analogWrite(IN4, 0);
   } else {
     analogWrite(IN3, 0);
-    analogWrite(IN4, speed2); 
+    analogWrite(IN4, speed2);
   }
 }
 
@@ -53,18 +53,26 @@ void readSerial() {
   }
 }
 
+int printCount = 0;
 void loop() {
   if (Serial.available()) {
     readSerial();
   }
-  
-  Serial.print(String(digitalRead(FL)) + ",");
-  Serial.print(String(digitalRead(CL)) + ",");
-  Serial.print(String(digitalRead(CC)) + ",");
-  Serial.print(String(digitalRead(CR)) + ",");
-  Serial.print(String(digitalRead(FR)) + ",");
-  Serial.print(String(speed1) + ",");
-  Serial.println(String(speed2));
-  
+
   writeSpeed();
+
+  if (printCount >= 50) {
+    Serial.print(String(digitalRead(FL)) + ",");
+    Serial.print(String(digitalRead(CL)) + ",");
+    Serial.print(String(digitalRead(CC)) + ",");
+    Serial.print(String(digitalRead(CR)) + ",");
+    Serial.print(String(digitalRead(FR)) + ",");
+    Serial.print(String(speed1) + ",");
+    Serial.println(String(speed2));
+    printCount = 0;
+  } else {
+    printCount += 1;
+  }
+
+  delay(1);
 }
